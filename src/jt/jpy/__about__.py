@@ -1,4 +1,4 @@
-# Copyright 2014-2017 Adam Karpierz
+# Copyright 2014-2018 Adam Karpierz
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
@@ -16,6 +16,6 @@ __version__      = "{0.major}.{0.minor}.{0.micro}{1}{2}".format(__version_info__
                    "" if __version_info__.releaselevel == "final" else __version_info__.serial)
 __author__       = "Adam Karpierz"
 __email__        = "python@python.pl"
-__copyright__    = "Copyright 2014-2017 {0}".format(__author__)
+__copyright__    = "Copyright 2014-2018 {0}".format(__author__)
 __license__      = "Apache License, Version 2.0 ; {0}".format(
                    "http://www.apache.org/licenses/LICENSE-2.0")

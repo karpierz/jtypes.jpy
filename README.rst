@@ -86,7 +86,7 @@ Prerequisites:
 License
 =======
 
-  | Copyright 2014-2017 Adam Karpierz
+  | Copyright 2014-2018 Adam Karpierz
   |
   | Licensed under the Apache License, Version 2.0
   | http://www.apache.org/licenses/LICENSE-2.0
