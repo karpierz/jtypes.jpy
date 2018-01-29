@@ -9,8 +9,8 @@ __all__ = ('__title__', '__summary__', '__uri__', '__version_info__',
 __title__        = "jtypes.jpy"
 __summary__      = "Bi-directional Python-Java bridge (ctypes/cffi-based Jpy)"
 __uri__          = "http://pypi.python.org/pypi/jtypes.jpy/"
-__version_info__ = type("version_info", (), dict(serial=1,
-                        major=0, minor=9, micro=0, releaselevel="beta"))
+__version_info__ = type("version_info", (), dict(serial=0,
+                        major=0, minor=9, micro=0, releaselevel="alpha"))
 __version__      = "{0.major}.{0.minor}.{0.micro}{1}{2}".format(__version_info__,
                    dict(final="", alpha="a", beta="b", rc="rc")[__version_info__.releaselevel],
                    "" if __version_info__.releaselevel == "final" else __version_info__.serial)
