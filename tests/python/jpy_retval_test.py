@@ -1,23 +1,25 @@
 import unittest
-import os
+from os import path # <AK> added
 
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
-jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[os.path.join(testd,"java","classes")])
-import jt.jpy as jpy
+from jt import jpyutil
+
+from . import test_dir  # <AK> added
+jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[path.join(test_dir,"java","classes")])
+import jpy
 
 
 class TestMethodReturnValues(unittest.TestCase):
-
     def setUp(self):
         self.Fixture = jpy.get_type('org.jpy.fixtures.MethodReturnValueTestFixture')
         self.assertIsNotNone(self.Fixture)
         self.Thing = jpy.get_type('org.jpy.fixtures.Thing')
         self.assertIsNotNone(self.Thing)
 
+
     def test_void(self):
         fixture = self.Fixture()
         self.assertEqual(fixture.getVoid(), None)
+
 
     def test_primitive_values(self):
         fixture = self.Fixture()
@@ -29,11 +31,13 @@ class TestMethodReturnValues(unittest.TestCase):
         self.assertAlmostEqual(fixture.getValue_float(15.1), 15.1, places=5)
         self.assertEqual(fixture.getValue_double(16.2), 16.2)
 
+
     def test_objects(self):
         fixture = self.Fixture()
         obj = self.Thing()
         self.assertEqual(fixture.getString('Hi!'), 'Hi!')
         self.assertEqual(fixture.getObject(obj), obj)
+
 
     def test_array1d_boolean(self):
         fixture = self.Fixture()
@@ -43,6 +47,7 @@ class TestMethodReturnValues(unittest.TestCase):
         self.assertEqual(array[1], False)
         self.assertEqual(array[2], True)
 
+
     def test_array1d_byte(self):
         fixture = self.Fixture()
         array = fixture.getArray1D_byte(-10, 20, 30)
@@ -50,6 +55,7 @@ class TestMethodReturnValues(unittest.TestCase):
         self.assertEqual(array[0], -10)
         self.assertEqual(array[1], 20)
         self.assertEqual(array[2], 30)
+
 
     def test_array1d_short(self):
         fixture = self.Fixture()
@@ -59,6 +65,7 @@ class TestMethodReturnValues(unittest.TestCase):
         self.assertEqual(array[1], 20001)
         self.assertEqual(array[2], 30001)
 
+
     def test_array1d_int(self):
         fixture = self.Fixture()
         array = fixture.getArray1D_int(-100001, 200001, 300001)
@@ -66,6 +73,7 @@ class TestMethodReturnValues(unittest.TestCase):
         self.assertEqual(array[0], -100001)
         self.assertEqual(array[1], 200001)
         self.assertEqual(array[2], 300001)
+
 
     def test_array1d_long(self):
         fixture = self.Fixture()
@@ -75,6 +83,7 @@ class TestMethodReturnValues(unittest.TestCase):
         self.assertEqual(array[1], 20000000001)
         self.assertEqual(array[2], 30000000001)
 
+
     def test_array1d_float(self):
         fixture = self.Fixture()
         array = fixture.getArray1D_float(-1.01, 2.01, 3.01)
@@ -82,6 +91,7 @@ class TestMethodReturnValues(unittest.TestCase):
         self.assertAlmostEqual(array[0], -1.01, places=5)
         self.assertAlmostEqual(array[1], 2.01, places=5)
         self.assertAlmostEqual(array[2], 3.01, places=5)
+
 
     def test_array1d_double(self):
         fixture = self.Fixture()
@@ -91,6 +101,7 @@ class TestMethodReturnValues(unittest.TestCase):
         self.assertEqual(array[1], 2.01)
         self.assertEqual(array[2], 3.01)
 
+
     def test_array1d_String(self):
         fixture = self.Fixture()
         array = fixture.getArray1D_String('A', 'B', 'C')
@@ -98,6 +109,7 @@ class TestMethodReturnValues(unittest.TestCase):
         self.assertEqual(array[0], 'A')
         self.assertEqual(array[1], 'B')
         self.assertEqual(array[2], 'C')
+
 
     def test_array1d_Object(self):
         fixture = self.Fixture()

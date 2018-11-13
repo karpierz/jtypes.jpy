@@ -1,8 +1,8 @@
 """
 Testing Python import machinery with the goal to let users import Java class like this:
-    from jt.jpy.java.io import File
+    from jpy.java.io import File
 or
-    from jt.jpy import java.io.File as File
+    from jpy import java.io.File as File
 """
 
 __author__ = 'Norman'

@@ -1,18 +1,19 @@
 import unittest
-import os
 import array
+from os import path # <AK> added
 
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
-jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[os.path.join(testd,"java","classes")])
-import jt.jpy as jpy
+from jt import jpyutil
+
+from . import test_dir  # <AK> added
+jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[path.join(test_dir,"java","classes")])
+import jpy
 
 
 class TestTypeConversions(unittest.TestCase):
-
     def setUp(self):
         self.Fixture = jpy.get_type('org.jpy.fixtures.TypeConversionTestFixture')
         self.assertTrue('org.jpy.fixtures.TypeConversionTestFixture' in jpy.types)
+
 
     def test_ToObjectConversion(self):
         fixture = self.Fixture()
@@ -23,6 +24,7 @@ class TestTypeConversions(unittest.TestCase):
         with self.assertRaises(ValueError) as e:
             fixture.stringifyObjectArg(1 + 2j)
         self.assertEqual(str(e.exception), 'cannot convert a Python \'complex\' to a Java \'java.lang.Object\'')
+
 
     def test_ToPrimitiveArrayConversion(self):
         fixture = self.Fixture()
@@ -42,6 +44,7 @@ class TestTypeConversions(unittest.TestCase):
         with self.assertRaises(RuntimeError) as e:
             fixture.stringifyIntArrayArg(1 + 2j)
         self.assertEqual(str(e.exception), 'no matching Java method overloads found')
+
 
     def test_ToObjectArrayConversion(self):
         fixture = self.Fixture()

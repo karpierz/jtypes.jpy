@@ -1,14 +1,14 @@
 import unittest
-import os
+from os import path # <AK> added
 
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
-jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[os.path.join(testd,"java","classes")])
-import jt.jpy as jpy
+from jt import jpyutil
+
+from . import test_dir  # <AK> added
+jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[path.join(test_dir,"java","classes")])
+import jpy
 
 
 class TestFields(unittest.TestCase):
-
     def setUp(self):
         self.Fixture = jpy.get_type('org.jpy.fixtures.FieldTestFixture')
         self.assertIsNotNone(self.Fixture)
@@ -18,6 +18,7 @@ class TestFields(unittest.TestCase):
 
         self.String = jpy.get_type('java.lang.String')
         self.assertIsNotNone(self.String)
+
 
     def test_static_fields(self):
         self.assertEqual(self.Fixture.z_STATIC_FIELD, True)
@@ -31,6 +32,7 @@ class TestFields(unittest.TestCase):
 
         self.assertEqual(self.Fixture.S_OBJ_STATIC_FIELD, 'ABC')
         self.assertEqual(self.Fixture.l_OBJ_STATIC_FIELD, self.Thing(123))
+
 
     def test_primitive_instance_fields(self):
         fixture = self.Fixture()
@@ -60,6 +62,7 @@ class TestFields(unittest.TestCase):
         self.assertEqual(fixture.jInstField, 1234567890123456789)
         self.assertAlmostEqual(fixture.fInstField, 0.12345, places=5)
         self.assertAlmostEqual(fixture.dInstField, 0.123456789)
+
 
     def test_object_instance_fields(self):
         fixture = self.Fixture()

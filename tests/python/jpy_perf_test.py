@@ -1,12 +1,10 @@
 import unittest
-import os
 import time
 import random
-
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
+from jt import jpyutil
 jpyutil.init_jvm(jvm_maxmem='512M')
-import jt.jpy as jpy
+import jpy
+from . import with_performance  # <AK> added
 
 
 class TestPerformance(unittest.TestCase):
@@ -20,7 +18,7 @@ class TestPerformance(unittest.TestCase):
         HashMap = jpy.get_type('java.util.HashMap')
 
         # 1 million
-        N = 10 #!!! 1000000
+        N = 1000000 if with_performance() else 10  # <AK> was: 1000000
 
         indexes = list(range(N))
         random.shuffle(indexes)
@@ -45,6 +43,7 @@ class TestPerformance(unittest.TestCase):
             f = map.get(i)
         t1 = time.time()
         print('HashMap.get() took', t1-t0, 's for', N, 'calls, this is', 1000*(t1-t0)/N, 'ms per call')
+
 
 
 if __name__ == '__main__':

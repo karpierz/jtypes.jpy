@@ -1,17 +1,21 @@
 import unittest
-import os
 import sys
+from os import path # <AK> added
 
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
-jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[os.path.join(testd,"java","classes")])
-import jt.jpy as jpy
+from jt import jpyutil
 
-TYPE_STR_PREFIX = '<class '
+from . import test_dir  # <AK> added
+jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[path.join(test_dir,"java","classes")])
+import jpy
+
+
+if sys.version_info >= (3, 0, 0):
+    TYPE_STR_PREFIX = '<class '
+else:
+    TYPE_STR_PREFIX = '<class '  # <AK> was: '<type '
 
 
 class TestGetClass(unittest.TestCase):
-
     def test_get_class_of_primitive_array(self):
         IntArray1D = jpy.get_type('[I')
         self.assertEqual(str(IntArray1D), TYPE_STR_PREFIX + "'[I'>")
@@ -25,6 +29,7 @@ class TestGetClass(unittest.TestCase):
         with self.assertRaises(RuntimeError) as e:
             IntArray1D()
         self.assertEqual(str(e.exception), "no constructor found (missing JType attribute '__jinit__')")
+
 
     def test_get_class_of_object_array(self):
         StringArray1D = jpy.get_type('[Ljava.lang.String;')
@@ -46,6 +51,7 @@ class TestGetClass(unittest.TestCase):
         DoublePoint = jpy.get_type('java.awt.geom.Point2D$Double')
         self.assertEqual(str(DoublePoint), TYPE_STR_PREFIX + "'java.awt.geom.Point2D$Double'>")
 
+
     def test_get_class_of_unknown_type(self):
         with self.assertRaises(ValueError) as e:
             String = jpy.get_type('java.lang.Spring')
@@ -65,6 +71,7 @@ class TestGetClass(unittest.TestCase):
         for java_type in java_types:
             for i in range(200):
                 jpy.get_type(java_type)
+
 
 
 if __name__ == '__main__':

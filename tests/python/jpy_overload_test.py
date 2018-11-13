@@ -1,14 +1,15 @@
+# This file was modified by Illumon.
 import unittest
-import os
+from os import path # <AK> added
 
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
-jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[os.path.join(testd,"java","classes")])
-import jt.jpy as jpy
+from jt import jpyutil
+
+from . import test_dir  # <AK> added
+jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[path.join(test_dir,"java","classes")])
+import jpy
 
 
 class TestConstructorOverloads(unittest.TestCase):
-
     def setUp(self):
         self.Fixture = jpy.get_type('org.jpy.fixtures.ConstructorOverloadTestFixture')
         self.assertIsNotNone(self.Fixture)
@@ -41,7 +42,6 @@ class TestConstructorOverloads(unittest.TestCase):
 
 
 class TestMethodOverloads(unittest.TestCase):
-
     def setUp(self):
         self.Fixture = jpy.get_type('org.jpy.fixtures.MethodOverloadTestFixture')
         self.assertIsNotNone(self.Fixture)
@@ -87,16 +87,82 @@ class TestMethodOverloads(unittest.TestCase):
             fixture.join('x', 'y', 'z', 'u', 'v')
         self.assertEqual(str(e.exception), 'no matching Java method overloads found')
 
+    def test_stringAsComparable(self):
+        fixture = self.Fixture()
+        self.assertEqual(fixture.join2("a", 1, "c", "d"), 'String(a),Integer(1),String(c),String(d)')
+
+    def test_stringAsNumber(self):
+        fixture = self.Fixture()
+        with self.assertRaises(RuntimeError, msg='RuntimeError expected') as e:
+            fixture.join3('x', 2)
+        self.assertEqual(str(e.exception), 'no matching Java method overloads found')
+
+    def test_numbersAsNumber(self):
+        fixture = self.Fixture()
+        self.assertEqual(fixture.join3(1, 2), 'Integer(1),Integer(2)')
+        self.assertEqual(fixture.join3(1.1, 2), 'Double(1.1),Integer(2)')
+
+    def test_numbersAsComparable(self):
+        fixture = self.Fixture()
+        self.assertEqual(fixture.join2(1, 2, "c", "d"), 'Integer(1),Integer(2),String(c),String(d)')
+        self.assertEqual(fixture.join2(1.1, 2, "c", "d"), 'Double(1.1),Integer(2),String(c),String(d)')
+
+class TestVarArgs(unittest.TestCase):
+    def setUp(self):
+        self.Fixture = jpy.get_type('org.jpy.fixtures.VarArgsTestFixture')
+        self.assertIsNotNone(self.Fixture)
+
+    def test_varargsEmpty(self):
+        fixture = self.Fixture()
+
+        self.assertEqual(fixture.joinFloat("Prefix"), 'String(Prefix),float[]()')
+
+        with self.assertRaises(RuntimeError, msg='RuntimeError expected') as e:
+            res = fixture.join("Prefix")
+        self.assertEqual(str(e.exception), 'ambiguous Java method call, too many matching method overloads found')
+
+    def test_varargs(self):
+        fixture = self.Fixture()
+
+        self.assertEqual(fixture.join("Prefix", "a", "b", "c"), 'String(Prefix),String[](String(a),String(b),String(c))')
+        self.assertEqual(fixture.join("Prefix", 1, 2, 3), 'String(Prefix),int[](1,2,3)')
+        self.assertEqual(fixture.join("Prefix", 1.1, 2.1, 3.1), 'String(Prefix),double[](1.1,2.1,3.1)')
+
+        self.assertEqual(fixture.joinFloat("Prefix", 1.1, 2.1, 3.1), 'String(Prefix),float[](1.1,2.1,3.1)')
+
+        self.assertEqual(fixture.joinLong("Prefix", 1, 2, 3), 'String(Prefix),long[](1,2,3)')
+        bignum = 8589934592
+        self.assertEqual(fixture.joinLong("Prefix", 1, 2, 3, bignum), 'String(Prefix),long[](1,2,3,'+str(bignum)+')')
+
+        self.assertEqual(fixture.joinByte("Prefix", 1, 2, 3), 'String(Prefix),byte[](1,2,3)')
+        self.assertEqual(fixture.joinShort("Prefix", 1, 2, 3, 4), 'String(Prefix),short[](1,2,3,4)')
+        self.assertEqual(fixture.joinChar("Prefix", 65, 66), 'String(Prefix),char[](A,B)')
+
+        self.assertEqual(fixture.joinBoolean("Prefix", True, False), 'String(Prefix),boolean[](true,false)')
+        self.assertEqual(fixture.joinObjects("Prefix", True, "A String", 3), 'String(Prefix),Object[](Boolean(true),String(A String),Integer(3))')
+
+    def test_fixedArity(self):
+        fixture = self.Fixture()
+
+        self.assertEqual(fixture.chooseFixedArity(), 1)
+        self.assertEqual(fixture.chooseFixedArity(1), 2)
+        self.assertEqual(fixture.chooseFixedArity(1, 2), 2)
+
+    def test_stringVsObject(self):
+        fixture = self.Fixture()
+        self.assertEqual(fixture.stringOrObjectVarArgs(["a", "b"]), 3)
+        self.assertEqual(fixture.stringOrObjectVarArgs([1, 2, 3]), 5)
+
+
 
 class TestOtherMethodResolutionCases(unittest.TestCase):
 
     # see https://github.com/bcdev/jpy/issues/55
     def test_toReproduceAndFixIssue55(self):
         Paths = jpy.get_type('java.nio.file.Paths')
-        # The following outcommented statement is will end in a Python error
-        # RuntimeError: no matching Java method overloads found
-        #p = Paths.get('testfile')
-        # This is the embarrassing workaround
+        # The following statement will execute the var args method without any arguments
+        p = Paths.get('testfile')
+        # This is the workaround that was previously required
         p = Paths.get('testfile', [])
 
     # see https://github.com/bcdev/jpy/issues/56
@@ -132,17 +198,25 @@ class TestOtherMethodResolutionCases(unittest.TestCase):
         # without the fix, we get str(s) = "java.lang.String@xxxxxx"
         self.assertEqual(str(s), '[A, B, C]')
 
-
 class TestDefaultMethods(unittest.TestCase):
-
     def setUp(self):
         self.Fixture = jpy.get_type('org.jpy.fixtures.DefaultInterfaceImplTestFixture')
         self.assertIsNotNone(self.Fixture)
 
     # see https://github.com/bcdev/jpy/issues/102
     def test_defaultedInterfaces(self):
-	fixture = self.Fixture()
+        fixture = self.Fixture()
         self.assertEqual(fixture.doItPlusOne(), 3)
+
+
+class TestCovariantReturn(unittest.TestCase):
+    def setUp(self):
+        self.Fixture = jpy.get_type('org.jpy.fixtures.CovariantOverloadExtendTestFixture')
+        self.assertIsNotNone(self.Fixture)
+
+    def test_covariantReturn(self):
+        fixture = self.Fixture(1)
+        self.assertEqual(fixture.foo(4, 1).getX(), 6)
 
 
 if __name__ == '__main__':

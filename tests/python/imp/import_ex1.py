@@ -1,8 +1,8 @@
 """
 Testing Python import machinery with the goal to let users import Java class like this:
-    from jt.jpy.java.io import File
+    from jpy.java.io import File
 or
-    from jt.jpy import java.io.File as File
+    from jpy import java.io.File as File
 """
 
 __author__ = 'Norman'
@@ -115,10 +115,10 @@ jpi = JavaPackageImporter('packages-jre7.txt')
 
 sys.meta_path += [jpi]
 
-#import jt.jpy as jpy
+#import jpy
 import bibo
 import riser
-#from jt.jpy import Riser as Riser
+#from jpy import Riser as Riser
 
 
 import numpy

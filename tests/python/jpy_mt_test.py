@@ -1,28 +1,25 @@
-import unittest
-import os
 import threading
+import unittest
+from jt import jpyutil
 
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
 jpyutil.init_jvm(jvm_maxmem='512M')
-import jt.jpy as jpy
+import jpy
 
 
 class MyThread(threading.Thread):
 
     def __init__(self, value):
-
         threading.Thread.__init__(self)
         Integer = jpy.get_type('java.lang.Integer')
         self.intObj = Integer(value)
 
     def run(self):
-
         # perform some operation on the local object using a new thread
         self.intValue = self.intObj.intValue()
 
 
 class TestMultipleThreads(unittest.TestCase):
+
 
     def test_multi_thread_access(self):
 

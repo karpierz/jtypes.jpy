@@ -8,22 +8,24 @@ Bi-directional Python-Java bridge.
 Overview
 ========
 
-  jtypes.jpy is a bi-directional bridge between Python and Java which can be use
+  **jtypes.jpy** is a bi-directional bridge between Python and Java which can be use
   to call Java from Python and Python from Java.
 
-  | jtypes.jpy is a lightweight Python package, based on the ctypes FFI library.
-  | It is an almost fully compliant implementation of Norman Fomferra's Jpy package
+  `PyPI record`_.
+
+  | **jtypes.jpy** is a lightweight Python package, based on the *ctypes* or *cffi* library.
+  | It is an almost fully compliant implementation of Norman Fomferra's **Jpy** package
     by reimplementing its functionality in a clean Python instead of C.
 
 About Jpy:
 ----------
 
-Borrowed from the `original website <http://jpy.readthedocs.org/en/latest/>`__:
+Borrowed from the `original website`_:
 
-  jpy is a bi-directional Java-Python bridge allowing you to call Java from Python
+  **jpy** is a bi-directional Java-Python bridge allowing you to call Java from Python
   and Python from Java.
 
-  jpy is a **bi-directional** Python-Java bridge which you can use to embed Java code
+  **jpy** is a **bi-directional** Python-Java bridge which you can use to embed Java code
   in Python programs or the other way round. It has been designed particularly with
   regard to maximum data transfer speed between the two languages. It comes with a
   number of outstanding features:
@@ -47,7 +49,7 @@ Prerequisites:
 + Python 2.7 or higher or 3.4 or higher
 
   * http://www.python.org/
-  * 2.7 and 3.4 are primary test environments.
+  * 2.7 and 3.6 are primary test environments.
 
 + pip and setuptools
 
@@ -65,11 +67,11 @@ To ensure everything is running correctly you can run the tests using::
 Development
 ===========
 
-Visit `development page <https://github.com/karpierz/jtypes.jpy>`__
+Visit `development page`_
 
 Installation from sources:
 
-Clone the `sources <https://github.com/karpierz/jtypes.jpy>`__ and run::
+Clone the `sources`_ and run::
 
     python -m pip install ./jtypes.jpy
 
@@ -95,4 +97,9 @@ License
 Authors
 =======
 
-* Adam Karpierz <python@python.pl>
+* Adam Karpierz <adam@karpierz.net>
+
+.. _PyPI record: https://pypi.python.org/pypi/jtypes.jpy
+.. _original website: http://jpy.readthedocs.org/en/latest
+.. _development page: https://github.com/karpierz/jtypes.jpy
+.. _sources: https://github.com/karpierz/jtypes.jpy

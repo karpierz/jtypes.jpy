@@ -2,15 +2,17 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import sys
 
 from ..jvm.lib.compat import *
 from ..jvm.lib import annotate
+from ..jvm.lib import public
 from ..jvm.lib import const
 
 
+@public
 class Diag(object):
 
     """Controls output of diagnostic information for debugging"""
@@ -26,14 +28,15 @@ class Diag(object):
     F_ERR  = const(0x20, doc="Errors: print diagnostic information when erroneous states are detected")
     F_ALL  = const(0xFF, doc="Print any diagnostic messages")
 
-    _DiagFlags = 0x00  # F_OFF
+    _flags = 0x00  # F_OFF
 
     @property
     def flags(self):
 
-        """Combination of diagnostic flags (F_* constants). If != 0, diagnostic messages are printed out."""
+        """Combination of diagnostic flags (F_* constants).
+        If != 0, diagnostic messages are printed out."""
 
-        return int(Diag._DiagFlags)
+        return int(Diag._flags)
 
     @flags.setter
     def flags(self, value):
@@ -41,12 +44,12 @@ class Diag(object):
         if not isinstance(value, (int, long)):
             raise ValueError("value for 'flags' must be an integer number")
 
-        Diag._DiagFlags = int(value)
+        Diag._flags = int(value)
 
     @staticmethod
     @annotate(flags=int, format=str)
     def print(flags, format, *args):
 
-        if Diag._DiagFlags & flags:
-            print(format.format(*args))
+        if Diag._flags & flags:
+            print(format.format(*args), end="")
             sys.stdout.flush()

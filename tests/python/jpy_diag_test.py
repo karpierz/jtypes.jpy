@@ -1,14 +1,13 @@
 import unittest
-import os
 
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
+from jt import jpyutil
+
+
 jpyutil.init_jvm(jvm_maxmem='512M')
-import jt.jpy as jpy
+import jpy
 
 
 class TestJavaArrays(unittest.TestCase):
-
     def test_diag_flags_constants(self):
         self.assertIsNotNone(jpy.diag)
         self.assertIsNotNone(jpy.diag.flags)
@@ -20,6 +19,7 @@ class TestJavaArrays(unittest.TestCase):
         self.assertEqual(jpy.diag.F_JVM, 0x10)
         self.assertEqual(jpy.diag.F_ERR, 0x20)
         self.assertEqual(jpy.diag.F_ALL, 0xff)
+
 
     def test_diag_flags_value(self):
         self.assertIsNotNone(jpy.diag)

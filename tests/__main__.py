@@ -7,6 +7,7 @@ from __future__ import absolute_import, print_function
 import unittest
 import sys
 import os
+import importlib
 import logging
 
 from . import test_dir
@@ -28,7 +29,9 @@ def test_suite(names=None, omit=()):
     return tests
 
 
-def runTest():
+def main():
+
+    sys.modules["jpy"] = importlib.import_module("jt.jpy")
 
     print("Running testsuite", "\n", file=sys.stderr)
 
@@ -41,11 +44,7 @@ def runTest():
     sys.exit(0 if result.wasSuccessful() else 1)
 
 
-def main():
-
+if __name__.rpartition(".")[-1] == "__main__":
     # logging.basicConfig(level=logging.INFO)
     # logging.basicConfig(level=logging.DEBUG)
-    runTest()
-
-
-main()
+    main()

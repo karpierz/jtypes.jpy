@@ -1,17 +1,18 @@
 import unittest
-import os
+from os import path # <AK> added
 
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
-jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[os.path.join(testd,"java","classes")])
-import jt.jpy as jpy
+from jt import jpyutil
+
+from . import test_dir  # <AK> added
+jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[path.join(test_dir,"java","classes")])
+import jpy
 
 
 class TestTypeResolution(unittest.TestCase):
-
     def setUp(self):
         self.Fixture = jpy.get_type('org.jpy.fixtures.TypeResolutionTestFixture')
         self.assertIsNotNone(self.Fixture)
+
 
     def test_ThatTypeIsResolvedLate(self):
         self.assertTrue('org.jpy.fixtures.TypeResolutionTestFixture' in jpy.types)
@@ -55,6 +56,7 @@ class TestTypeResolution(unittest.TestCase):
         self.assertTrue('readObject' in ObjectInput.__dict__)
         # assert that a method declared of java.io.DataInput is in __dict__
         self.assertTrue('readLine' in ObjectInput.__dict__)
+
 
 
 if __name__ == '__main__':

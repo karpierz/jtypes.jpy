@@ -1,20 +1,21 @@
 import unittest
-import os
-import sys
 import array
+import sys
+from os import path # <AK> added
+
+from jt import jpyutil
+
+from . import test_dir  # <AK> added
+jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[path.join(test_dir,"java","classes")])
+import jpy
+
 try:
     import numpy as np
 except:
     np = None
 
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
-jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=[os.path.join(testd,"java","classes")])
-import jt.jpy as jpy
-
 
 def annotate_fixture_methods(type, method):
-
     # print('annotate_fixture_methods: type =', type, ', method =', method.name)
     if method.name == 'modifyThing':
         method.set_param_mutable(0, True)
@@ -36,24 +37,25 @@ def annotate_fixture_methods(type, method):
         method.set_param_output(0, True)
     return True
 
+
 jpy.type_callbacks['org.jpy.fixtures.ModifyAndReturnParametersTestFixture'] = annotate_fixture_methods
 
 
 class TestMutableAndReturnParameters(unittest.TestCase):
-
     def setUp(self):
         self.Fixture = jpy.get_type('org.jpy.fixtures.ModifyAndReturnParametersTestFixture')
         self.assertIsNotNone(self.Fixture)
         self.Thing = jpy.get_type('org.jpy.fixtures.Thing')
         self.assertIsNotNone(self.Thing)
 
+
     def test_modifyThing(self):
         fixture = self.Fixture()
         t = self.Thing()
-        print("@@@ test_modifyThing @@@", t, t.tp_base, dir(t)) #!!!
         self.assertEqual(t.getValue(), 0)
         fixture.modifyThing(t, 11)
         self.assertEqual(t.getValue(), 11)
+
 
     def test_returnThing(self):
         fixture = self.Fixture()
@@ -70,6 +72,7 @@ class TestMutableAndReturnParameters(unittest.TestCase):
         self.assertIsNotNone(t2)
         self.assertEqual(t2.getValue(), 0)
 
+
     def test_modifyAndReturnThing(self):
         fixture = self.Fixture()
 
@@ -84,6 +87,7 @@ class TestMutableAndReturnParameters(unittest.TestCase):
         t2 = fixture.modifyAndReturnThing(t1, 32)
         self.assertIsNotNone(t2)
         self.assertEqual(t2.getValue(), 32)
+
 
     def test_modifyIntArray(self):
         fixture = self.Fixture()
@@ -128,6 +132,7 @@ class TestMutableAndReturnParameters(unittest.TestCase):
             fixture.modifyIntArray(a, 14, 15, 16)
         self.assertEqual(str(e.exception), 'java.lang.NullPointerException')
 
+
     def test_returnIntArray(self):
         fixture = self.Fixture()
 
@@ -162,6 +167,7 @@ class TestMutableAndReturnParameters(unittest.TestCase):
         a1 = [0, 0, 0]
         a2 = fixture.returnIntArray(a1)
         self.assertEqual(type(a2), jpy.get_type('[I'))
+
 
     def test_modifyAndReturnIntArray(self):
         fixture = self.Fixture()
@@ -212,6 +218,7 @@ class TestMutableAndReturnParameters(unittest.TestCase):
         self.assertEqual(a2[0], 16)
         self.assertEqual(a2[1], 17)
         self.assertEqual(a2[2], 18)
+
 
     # See https://github.com/bcdev/jpy/issues/36
     #

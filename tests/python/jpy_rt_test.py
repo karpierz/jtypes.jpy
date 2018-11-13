@@ -1,28 +1,28 @@
 import unittest
-import os
 import sys
 
-testd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import jt.jpyutil as jpyutil
+from jt import jpyutil
+
+
 jpyutil.init_jvm(jvm_maxmem='512M')
-import jt.jpy as jpy
+import jpy
 
 
 class TestString(unittest.TestCase):
-
     """
     Tests various Java SE classes from rt.jar
-
     """
 
     def setUp(self):
         self.String = jpy.get_type('java.lang.String')
         self.assertIsNotNone(self.String)
 
+
     def test_constructor(self):
         s = self.String('Bibo')
         self.assertEqual(type(s), self.String)
         self.assertEqual(str(s), 'Bibo')
+
 
     def test_unicode_constructor_with_py27(self):
         # This test is actually the same as test_constructor(), but 'str' is not 'unicode' in Python 2.7
@@ -30,11 +30,13 @@ class TestString(unittest.TestCase):
         self.assertEqual(type(s), self.String)
         self.assertEqual(str(s), 'Bibo')
 
+
     def test_toString(self):
         s = self.String('Bibo')
         self.assertTrue('toString' in self.String.__dict__)
         s = s.toString()
         self.assertEqual(s, 'Bibo')
+
 
     def test_substring(self):
         s = self.String('Bibo')
@@ -43,6 +45,7 @@ class TestString(unittest.TestCase):
         self.assertEqual(s2, 'Bi')
         s2 = s.substring(2)
         self.assertEqual(s2, 'bo')
+
 
     def test_split(self):
         s = self.String('/usr/local/bibo')
@@ -56,6 +59,7 @@ class TestString(unittest.TestCase):
         array = s.split('/', 2)
         self.assertEqual(array[0], '')
         self.assertEqual(array[1], 'usr/local/bibo')
+
 
     def test_getBytes(self):
         s = self.String('Bibo')
@@ -71,22 +75,27 @@ class TestString(unittest.TestCase):
         self.assertEqual(array[2], 98)
         self.assertEqual(array[3], 111)
 
+
     def test_getClass(self):
         s = self.String()
         c = s.getClass()
         self.assertEqual('java.lang.String', c.getName())
 
 
-class TestFile(unittest.TestCase):
+import os
 
+
+class TestFile(unittest.TestCase):
     def setUp(self):
         self.File = jpy.get_type('java.io.File')
         self.assertIsNotNone(self.File)
+
 
     def test_constructor(self):
         f = self.File('/usr/local/bibo')
         self.assertEqual(type(f), self.File)
         self.assertEqual(str(f).split(os.sep), ['', 'usr', 'local', 'bibo'])
+
 
     def test_getPath(self):
         f = self.File('/usr/local/bibo')
@@ -94,11 +103,13 @@ class TestFile(unittest.TestCase):
         path = f.getPath()
         self.assertEqual(path.split(os.sep), ['', 'usr', 'local', 'bibo'])
 
+
     def test_getName(self):
         f = self.File('/usr/local/bibo')
         self.assertTrue('getName' in self.File.__dict__)
         name = f.getName()
         self.assertEqual(name, 'bibo')
+
 
     def test_toPath(self):
         f = self.File('/usr/local/bibo')
@@ -126,10 +137,10 @@ class TestFile(unittest.TestCase):
 
 
 class TestArrayList(unittest.TestCase):
-
     def setUp(self):
         self.ArrayList = jpy.get_type('java.util.ArrayList')
         self.File = jpy.get_type('java.io.File')
+
 
     def test_ArrayList(self):
         f = self.File('/usr/local/bibo')
@@ -165,10 +176,10 @@ class TestArrayList(unittest.TestCase):
 
 
 class TestHashMap(unittest.TestCase):
-
     def setUp(self):
         self.HashMap = jpy.get_type('java.util.HashMap')
         self.File = jpy.get_type('java.io.File')
+
 
     def test_HashMap(self):
         f = self.File('/usr/local/bibo')
